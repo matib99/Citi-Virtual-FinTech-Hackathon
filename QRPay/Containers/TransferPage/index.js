@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
@@ -13,29 +12,32 @@ import {API_URL, PAYMENT_STATUS} from './const';
 
 const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
 
-export const PaymentPage = ({navigation, route}) => {
+// rnBiometrics.isSensorAvailable().then(resultObject => {
+//   const {available, biometryType} = resultObject;
+
+//   if (available && biometryType === BiometryTypes.TouchID) {
+//     console.log('TouchID is supported');
+//   } else if (available && biometryType === BiometryTypes.FaceID) {
+//     console.log('FaceID is supported');
+//   } else if (available && biometryType === BiometryTypes.Biometrics) {
+//     console.log('Biometrics is supported');
+//   } else {
+//     console.log('Biometrics not supported');
+//   }
+// })
+
+export const TransferPage = ({navigation, route}) => {
   const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.LOADING);
-  const [transaction, setTransaction] = useState(null);
-  const [deniedMessage, setDeniedMessage] = useState('');
+  const [transactionID, setTransactionID] = useState(null);
 
   useEffect(() => {
+    setTransactionID(route.params.transactionID);
     setPaymentStatus(PAYMENT_STATUS.LOADING);
-    axios
-      .get(`${API_URL}/${route.params.transactionID}`)
-      .then(res => {
-        const data = res.data;
-        const newTransaction = {
-          id: route.params.transactionID,
-          storeName: data.name,
-          amount: data.amount,
-          completed: data.completed,
-        };
-        setTransaction(newTransaction);
+    if (route.params.transactionID) {
+      setTimeout(() => {
         setPaymentStatus(PAYMENT_STATUS.AWAITING);
-      })
-      .catch(err => {
-        alert(`axios error ${err}`);
-      });
+      }, 1000);
+    }
   }, [route.params.transactionID]);
 
   const verify = (onSuccess, onFailure, onCancel) => {
@@ -57,22 +59,13 @@ export const PaymentPage = ({navigation, route}) => {
   };
   const onAccept = () => {
     setPaymentStatus(PAYMENT_STATUS.PROCESSING);
-    axios
-      .post(`${API_URL}/${transaction.id}`, {
-        token: 'asdfasdfa',
-      })
-      .then(res => {
-        const data = res.data;
-        if (data.completed) {
-          setPaymentStatus(PAYMENT_STATUS.ACCEPTED);
-        } else {
-          setDeniedMessage(data.message);
-          setPaymentStatus(PAYMENT_STATUS.DENIED);
-        }
-      })
-      .catch(err => {
-        alert(`axios error ${err}`);
-      });
+    setTimeout(() => {
+      if (Math.random() > 0.5) {
+        setPaymentStatus(PAYMENT_STATUS.DENIED);
+      } else {
+        setPaymentStatus(PAYMENT_STATUS.ACCEPTED);
+      }
+    }, 1000);
   };
   const onDecline = () => {
     setPaymentStatus(PAYMENT_STATUS.CANCELED);
@@ -81,7 +74,8 @@ export const PaymentPage = ({navigation, route}) => {
   return (
     <View style={styles.paymentPageContainer}>
       <PaymentCard
-        transaction={transaction}
+        storeName="Test Shop"
+        amount={123}
         onAccept={() =>
           verify(
             onAccept,
@@ -89,7 +83,6 @@ export const PaymentPage = ({navigation, route}) => {
             () => alert('Verification canceled'),
           )
         }
-        deniedMessage={deniedMessage}
         onDecline={onDecline}
         status={paymentStatus}
       />

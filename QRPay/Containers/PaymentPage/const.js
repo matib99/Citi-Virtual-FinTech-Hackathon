@@ -7,4 +7,4 @@ export const PAYMENT_STATUS = {
   ACCEPTED: 5,
 };
 
-export const API_URL = 'http://qrpay.com';
+export const API_URL = 'http://10.0.2.2:5000';

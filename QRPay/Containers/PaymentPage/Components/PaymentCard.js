@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, BackHandler} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -8,7 +8,6 @@ import {
   Card,
   Text,
   Button,
-  ProgressBar,
   ActivityIndicator,
   Avatar,
 } from 'react-native-paper';
@@ -24,9 +23,13 @@ const statusToTitle = {
 };
 
 export const PaymentCard = ({
-  storeName = 'Online Shop',
-  amount = 42,
-  deniedMessage = "Transaction denied - unknown error",
+  transaction = {
+    id: 2137,
+    storeName: 'Online Shop',
+    amount: 42,
+    completed: false.valueOf,
+  },
+  deniedMessage = 'Transaction denied - unknown error',
   onAccept = () => {},
   onDecline = () => {},
   status = PAYMENT_STATUS.LOADING,
@@ -48,12 +51,14 @@ export const PaymentCard = ({
         style={styles.title}
         title={statusToTitle[status]}
         titleStyle={styles.titleText}
-        subtitle={status === PAYMENT_STATUS.LOADING ? '...' : storeName}
+        subtitle={
+          status === PAYMENT_STATUS.LOADING ? '...' : transaction.storeName
+        }
         subtitleStyle={styles.subtitleText}
       />
       <Card.Content>
         {status === PAYMENT_STATUS.AWAITING && (
-          <Text style={styles.amount}> ${amount} </Text>
+          <Text style={styles.amount}> ${transaction.amount} </Text>
         )}
         {status === PAYMENT_STATUS.DENIED && (
           <Text style={styles.deniedMessage}> {deniedMessage} </Text>
@@ -93,10 +98,22 @@ export const PaymentCard = ({
             <Button mode="contained" icon="refresh" onPress={onAccept}>
               Try Again
             </Button>
-            <Button mode="contained" icon="refresh" onPress={onAccept}>
-              Try Again
+            <Button
+              mode="outlined"
+              icon="close"
+              onPress={() => BackHandler.exitApp()}>
+              Exit
             </Button>
           </>
+        )}
+        {(status === PAYMENT_STATUS.ACCEPTED ||
+          status === PAYMENT_STATUS.CANCELED) && (
+          <Button
+            mode="contained"
+            icon="close"
+            onPress={() => BackHandler.exitApp()}>
+            Exit
+          </Button>
         )}
       </Card.Actions>
     </Card>
