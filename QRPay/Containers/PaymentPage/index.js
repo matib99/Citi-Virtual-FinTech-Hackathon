@@ -1,31 +1,30 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
-// import axios from 'axios';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-// import {Card, Text, Button} from 'react-native-paper';
+import {verify} from '../../utils/verification';
 
 import {PaymentCard} from './Components';
 import {API_URL, PAYMENT_STATUS} from './const';
-
-const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
 
 export const PaymentPage = ({navigation, route}) => {
   const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.LOADING);
   const [transaction, setTransaction] = useState(null);
   const [deniedMessage, setDeniedMessage] = useState('');
 
+  const transactionID =
+    route && route.params ? route.params.transactionID : null;
+
   useEffect(() => {
+    if (!transactionID) return;
     setPaymentStatus(PAYMENT_STATUS.LOADING);
     axios
-      .get(`${API_URL}/${route.params.transactionID}`)
+      .get(`${API_URL}/${transactionID}`)
       .then(res => {
         const data = res.data;
         const newTransaction = {
-          id: route.params.transactionID,
+          id: transactionID,
           storeName: data.name,
           amount: data.amount,
           completed: data.completed,
@@ -36,25 +35,8 @@ export const PaymentPage = ({navigation, route}) => {
       .catch(err => {
         alert(`axios error ${err}`);
       });
-  }, [route.params.transactionID]);
+  }, [transactionID]);
 
-  const verify = (onSuccess, onFailure, onCancel) => {
-    rnBiometrics
-      .simplePrompt({
-        promptMessage: 'Confirm payment',
-      })
-      .then(resultObject => {
-        const {success} = resultObject;
-        if (success) {
-          onSuccess();
-        } else {
-          onCancel();
-        }
-      })
-      .catch(() => {
-        onFailure();
-      });
-  };
   const onAccept = () => {
     setPaymentStatus(PAYMENT_STATUS.PROCESSING);
     axios

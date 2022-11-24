@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {SafeAreaView, View} from 'react-native';
 import {
+  ActivityIndicator,
   Appbar,
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
@@ -12,7 +13,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {PaymentPage} from './Containers/PaymentPage';
 import {MyStack} from './Containers/Stack';
 import {Link, NavigationContainer, useRoute} from '@react-navigation/native';
-import { enableScreens } from 'react-native-screens';
+import {enableScreens} from 'react-native-screens';
 
 const linking = {
   prefixes: ['qrpay://'],
@@ -20,6 +21,7 @@ const linking = {
     screens: {
       Payment: 'payment/:transactionID',
       Transfer: 'transfer/:userID',
+      User: 'user',
       Unknown: '*',
       // Profile: 'user',
     },
@@ -29,12 +31,9 @@ const linking = {
 enableScreens(true);
 
 const App = () => {
-  const backgroundStyle = {
-    backgroundColor: Colors.lighter,
-  };
   return (
     <PaperProvider>
-      <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
+      <NavigationContainer linking={linking}>
         <MyStack />
       </NavigationContainer>
     </PaperProvider>

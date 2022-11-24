@@ -1,84 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
+
 // import axios from 'axios';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 // import {Card, Text, Button} from 'react-native-paper';
 
-import {PaymentCard} from './Components';
-import {API_URL, PAYMENT_STATUS} from './const';
-
-const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
-
-// rnBiometrics.isSensorAvailable().then(resultObject => {
-//   const {available, biometryType} = resultObject;
-
-//   if (available && biometryType === BiometryTypes.TouchID) {
-//     console.log('TouchID is supported');
-//   } else if (available && biometryType === BiometryTypes.FaceID) {
-//     console.log('FaceID is supported');
-//   } else if (available && biometryType === BiometryTypes.Biometrics) {
-//     console.log('Biometrics is supported');
-//   } else {
-//     console.log('Biometrics not supported');
-//   }
-// })
+import {TransferCard} from './Components';
+import {PAYMENT_STATUS} from '../PaymentPage/const';
+import {verify} from '../../utils/verification';
 
 export const TransferPage = ({navigation, route}) => {
-  const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.LOADING);
-  const [transactionID, setTransactionID] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.AWAITING);
 
-  useEffect(() => {
-    setTransactionID(route.params.transactionID);
-    setPaymentStatus(PAYMENT_STATUS.LOADING);
-    if (route.params.transactionID) {
-      setTimeout(() => {
-        setPaymentStatus(PAYMENT_STATUS.AWAITING);
-      }, 1000);
-    }
-  }, [route.params.transactionID]);
+  const transferTo = route && route.params ? route.params.userID : null;
 
-  const verify = (onSuccess, onFailure, onCancel) => {
-    rnBiometrics
-      .simplePrompt({
-        promptMessage: 'Confirm payment',
-      })
-      .then(resultObject => {
-        const {success} = resultObject;
-        if (success) {
-          onSuccess();
-        } else {
-          onCancel();
-        }
-      })
-      .catch(() => {
-        onFailure();
-      });
-  };
-  const onAccept = () => {
+  const onAccept = amount => {
     setPaymentStatus(PAYMENT_STATUS.PROCESSING);
-    setTimeout(() => {
-      if (Math.random() > 0.5) {
-        setPaymentStatus(PAYMENT_STATUS.DENIED);
-      } else {
-        setPaymentStatus(PAYMENT_STATUS.ACCEPTED);
-      }
-    }, 1000);
+    alert(amount);
+    // axios bla bla
   };
   const onDecline = () => {
     setPaymentStatus(PAYMENT_STATUS.CANCELED);
   };
 
   return (
-    <View style={styles.paymentPageContainer}>
-      <PaymentCard
-        storeName="Test Shop"
-        amount={123}
-        onAccept={() =>
+    <View style={styles.transferPageContainer}>
+      <TransferCard
+        transferTo={transferTo}
+        onAccept={amount =>
           verify(
-            onAccept,
+            () => onAccept(amount),
             () => alert('Verification failed'),
             () => alert('Verification canceled'),
           )
@@ -91,7 +44,7 @@ export const TransferPage = ({navigation, route}) => {
 };
 
 const styles = StyleSheet.create({
-  paymentPageContainer: {
+  transferPageContainer: {
     flex: 1,
     marginTop: 32,
     paddingHorizontal: 24,
