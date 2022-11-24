@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 // import axios from 'axios';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
 
 // import {Card, Text, Button} from 'react-native-paper';
 
@@ -13,32 +12,19 @@ import {API_URL, PAYMENT_STATUS} from './const';
 
 const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
 
-// rnBiometrics.isSensorAvailable().then(resultObject => {
-//   const {available, biometryType} = resultObject;
-
-//   if (available && biometryType === BiometryTypes.TouchID) {
-//     console.log('TouchID is supported');
-//   } else if (available && biometryType === BiometryTypes.FaceID) {
-//     console.log('FaceID is supported');
-//   } else if (available && biometryType === BiometryTypes.Biometrics) {
-//     console.log('Biometrics is supported');
-//   } else {
-//     console.log('Biometrics not supported');
-//   }
-// })
-
-export const PaymentPage = ({transactionID}) => {
+export const PaymentPage = ({navigation, route}) => {
   const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.LOADING);
-  const [transaction, setTransaction] = useState(null);
+  const [transactionID, setTransactionID] = useState(null);
 
   useEffect(() => {
+    setTransactionID(route.params.transactionID);
     setPaymentStatus(PAYMENT_STATUS.LOADING);
-    if (transactionID) {
+    if (route.params.transactionID) {
       setTimeout(() => {
         setPaymentStatus(PAYMENT_STATUS.AWAITING);
       }, 1000);
     }
-  }, [transactionID]);
+  }, [route.params.transactionID]);
 
   const verify = (onSuccess, onFailure, onCancel) => {
     rnBiometrics
@@ -92,6 +78,7 @@ export const PaymentPage = ({transactionID}) => {
 
 const styles = StyleSheet.create({
   paymentPageContainer: {
+    flex: 1,
     marginTop: 32,
     paddingHorizontal: 24,
     textAlign: 'center',

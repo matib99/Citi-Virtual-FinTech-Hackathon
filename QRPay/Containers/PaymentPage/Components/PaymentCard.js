@@ -89,9 +89,14 @@ export const PaymentCard = ({
           </>
         )}
         {status === PAYMENT_STATUS.DENIED && (
-          <Button mode="contained" icon="refresh" onPress={onAccept}>
-            Try Again
-          </Button>
+          <>
+            <Button mode="contained" icon="refresh" onPress={onAccept}>
+              Try Again
+            </Button>
+            <Button mode="contained" icon="refresh" onPress={onAccept}>
+              Try Again
+            </Button>
+          </>
         )}
       </Card.Actions>
     </Card>
