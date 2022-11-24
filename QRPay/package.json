@@ -16,6 +16,7 @@
     "metro": "*",
     "react": "17.0.2",
     "react-native": "0.68.2",
+    "react-native-biometrics": "^3.0.1",
     "react-native-cli": "^2.0.1",
     "react-native-paper": "^4.12.5",
     "react-native-vector-icons": "^9.2.0",

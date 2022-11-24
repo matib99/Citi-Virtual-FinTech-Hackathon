@@ -1,13 +1,31 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
 // import axios from 'axios';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+
 
 // import {Card, Text, Button} from 'react-native-paper';
 
 import {PaymentCard} from './Components';
 import {API_URL, PAYMENT_STATUS} from './const';
+
+const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
+
+// rnBiometrics.isSensorAvailable().then(resultObject => {
+//   const {available, biometryType} = resultObject;
+
+//   if (available && biometryType === BiometryTypes.TouchID) {
+//     console.log('TouchID is supported');
+//   } else if (available && biometryType === BiometryTypes.FaceID) {
+//     console.log('FaceID is supported');
+//   } else if (available && biometryType === BiometryTypes.Biometrics) {
+//     console.log('Biometrics is supported');
+//   } else {
+//     console.log('Biometrics not supported');
+//   }
+// })
 
 export const PaymentPage = ({transactionID}) => {
   const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.LOADING);
@@ -22,6 +40,23 @@ export const PaymentPage = ({transactionID}) => {
     }
   }, [transactionID]);
 
+  const verify = (onSuccess, onFailure, onCancel) => {
+    rnBiometrics
+      .simplePrompt({
+        promptMessage: 'Confirm payment',
+      })
+      .then(resultObject => {
+        const {success} = resultObject;
+        if (success) {
+          onSuccess();
+        } else {
+          onCancel();
+        }
+      })
+      .catch(() => {
+        onFailure();
+      });
+  };
   const onAccept = () => {
     setPaymentStatus(PAYMENT_STATUS.PROCESSING);
     setTimeout(() => {
@@ -41,7 +76,13 @@ export const PaymentPage = ({transactionID}) => {
       <PaymentCard
         storeName="Test Shop"
         amount={123}
-        onAccept={onAccept}
+        onAccept={() =>
+          verify(
+            onAccept,
+            () => alert('Verification failed'),
+            () => alert('Verification canceled'),
+          )
+        }
         onDecline={onDecline}
         status={paymentStatus}
       />
