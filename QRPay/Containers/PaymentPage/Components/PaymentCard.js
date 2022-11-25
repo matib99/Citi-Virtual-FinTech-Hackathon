@@ -52,7 +52,9 @@ export const PaymentCard = ({
         title={statusToTitle[status]}
         titleStyle={styles.titleText}
         subtitle={
-          status === PAYMENT_STATUS.LOADING ? '...' : transaction.storeName
+          status === PAYMENT_STATUS.LOADING
+            ? '...'
+            : `Store: ${transaction.storeName}`
         }
         subtitleStyle={styles.subtitleText}
       />

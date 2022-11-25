@@ -8,18 +8,35 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 // import {Card, Text, Button} from 'react-native-paper';
 
 import {TransferCard} from './Components';
-import {PAYMENT_STATUS} from '../PaymentPage/const';
+import {API_URL, PAYMENT_STATUS} from '../PaymentPage/const';
 import {verify} from '../../utils/verification';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const TransferPage = ({navigation, route}) => {
   const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.AWAITING);
-
+  const [deniedMessage, setDeniedMessage] = useState('');
   const transferTo = route && route.params ? route.params.userID : null;
 
-  const onAccept = amount => {
+  const onAccept = async amount => {
     setPaymentStatus(PAYMENT_STATUS.PROCESSING);
-    alert(amount);
-    // axios bla bla
+    const username = await AsyncStorage.getItem('username');
+
+    axios
+      .post(`${API_URL}/user/${transferTo}`, {
+        token: username,
+        amount: amount,
+      })
+      .then(res => {
+        const data = res.data;
+        console.log(data);
+        setPaymentStatus(PAYMENT_STATUS.ACCEPTED);
+      })
+      .catch(err => {
+        const errorMessage = err.response.data.error;
+        setDeniedMessage(errorMessage);
+        setPaymentStatus(PAYMENT_STATUS.DENIED);
+      });
   };
   const onDecline = () => {
     setPaymentStatus(PAYMENT_STATUS.CANCELED);
@@ -38,6 +55,7 @@ export const TransferPage = ({navigation, route}) => {
         }
         onDecline={onDecline}
         status={paymentStatus}
+        deniedMessage={deniedMessage}
       />
     </View>
   );
@@ -49,7 +67,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     paddingHorizontal: 24,
     textAlign: 'center',
-    justifyContent: 'center',
   },
   title: {
     // textAlign: 'center',

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
@@ -37,11 +38,12 @@ export const PaymentPage = ({navigation, route}) => {
       });
   }, [transactionID]);
 
-  const onAccept = () => {
+  const onAccept = async () => {
     setPaymentStatus(PAYMENT_STATUS.PROCESSING);
+    const username = await AsyncStorage.getItem('username');
     axios
       .post(`${API_URL}/${transaction.id}`, {
-        token: 'asdfasdfa',
+        token: username,
       })
       .then(res => {
         const data = res.data;
@@ -53,7 +55,9 @@ export const PaymentPage = ({navigation, route}) => {
         }
       })
       .catch(err => {
-        alert(`axios error ${err}`);
+        const errorMessage = err.response.data.error;
+        setDeniedMessage(errorMessage);
+        setPaymentStatus(PAYMENT_STATUS.DENIED);
       });
   };
   const onDecline = () => {
@@ -85,7 +89,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     paddingHorizontal: 24,
     textAlign: 'center',
-    justifyContent: 'center',
   },
   title: {
     // textAlign: 'center',

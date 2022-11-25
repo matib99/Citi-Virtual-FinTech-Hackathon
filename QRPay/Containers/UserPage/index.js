@@ -13,7 +13,7 @@ import QRCode from 'react-native-qrcode-svg';
 const logo = require('../../assets/qrpay.png');
 
 export const UserPage = ({navigation, route}) => {
-  const [username, setUsername] = useState('User1');
+  const [username, setUsername] = useState('user1');
   const [editing, setEditing] = useState(false);
 
   const userIcon = () => (
@@ -26,16 +26,19 @@ export const UserPage = ({navigation, route}) => {
   );
 
   useEffect(() => {
-    AsyncStorage.getItem('@username').then(val => {
-      if (val !== null) {
+    AsyncStorage.getItem('username').then(val => {
+      if (val != null) {
         setUsername(val);
+      } else {
+        setUsername('user1');
       }
-      setUsername('user1');
     });
   }, []);
-  const onUsernameChange = () => {
-    AsyncStorage.setItem('@username', username)
+
+  const saveUsername = newUsername => {
+    AsyncStorage.setItem('username', newUsername)
       .then(() => {
+        setUsername(newUsername);
         setEditing(false);
       })
       .catch(err => alert(err));
@@ -68,7 +71,10 @@ export const UserPage = ({navigation, route}) => {
         </Card.Content>
         <Card.Actions style={styles.actions}>
           {editing && (
-            <Button mode="contained" icon="check" onPress={onUsernameChange}>
+            <Button
+              mode="contained"
+              icon="check"
+              onPress={() => saveUsername(username)}>
               Accept
             </Button>
           )}

@@ -47,7 +47,7 @@ export const TransferCard = ({
         style={styles.title}
         title={statusToTitle[status]}
         titleStyle={styles.titleText}
-        subtitle={transferTo}
+        subtitle={`Transfer to: ${transferTo}`}
         subtitleStyle={styles.subtitleText}
       />
       <Card.Content>
@@ -79,7 +79,10 @@ export const TransferCard = ({
       <Card.Actions style={styles.actions}>
         {status === PAYMENT_STATUS.AWAITING && (
           <>
-            <Button mode="contained" icon="check" onPress={onAccept}>
+            <Button
+              mode="contained"
+              icon="check"
+              onPress={() => onAccept(amount)}>
               Accept
             </Button>
             <Button mode="outlined" icon="close" onPress={onDecline}>
@@ -89,7 +92,10 @@ export const TransferCard = ({
         )}
         {status === PAYMENT_STATUS.DENIED && (
           <>
-            <Button mode="contained" icon="refresh" onPress={onAccept}>
+            <Button
+              mode="contained"
+              icon="refresh"
+              onPress={() => onAccept(amount)}>
               Try Again
             </Button>
             <Button
