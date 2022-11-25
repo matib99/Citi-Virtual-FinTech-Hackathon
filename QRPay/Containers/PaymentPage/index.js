@@ -34,7 +34,7 @@ export const PaymentPage = ({navigation, route}) => {
         setPaymentStatus(PAYMENT_STATUS.AWAITING);
       })
       .catch(err => {
-        alert(`axios error ${err}`);
+        alert(`axios error ${err.response.data}`);
       });
   }, [transactionID]);
 

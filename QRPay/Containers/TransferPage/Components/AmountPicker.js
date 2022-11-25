@@ -15,12 +15,13 @@ import {
 } from 'react-native-paper';
 
 const toDols = x =>
-  x.toLocaleString('fullwide', {
+  x.toLocaleString('us-US', {
     style: 'currency',
     currency: 'USD',
     notation: 'standard',
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
+    useGrouping: false,
   });
 
 export const AmountPicker = ({amount = 10.0, onAmountChange = () => {}}) => {
@@ -41,7 +42,7 @@ export const AmountPicker = ({amount = 10.0, onAmountChange = () => {}}) => {
         // left={<TextInput.Affix text="$" />}
         value={toDols(amount)}
         onChangeText={text =>
-          onAmountChange(parseFloat(text.replace(/[^\d.-]/g, '')))
+          onAmountChange(parseFloat(text.replace(/[^\d,.-]/g, '')))
         }
         keyboardType="numeric"
       />

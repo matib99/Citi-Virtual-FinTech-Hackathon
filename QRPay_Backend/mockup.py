@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 sessions = {}
 
-sessions["2137"] = ("Kawiarnia Kremóweczka", 21.37, False)
+sessions["vpykdw"] = ("Kawiarnia Kremóweczka", 21.37, False)
 
 
 id_length = 10
