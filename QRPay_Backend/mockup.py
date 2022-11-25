@@ -6,9 +6,6 @@ app = Flask(__name__)
 
 sessions = {}
 
-sessions["vpykdw"] = ("Kawiarnia Kremóweczka", 21.37, False)
-
-
 id_length = 10
 
 def get_new_id():
