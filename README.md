@@ -20,6 +20,9 @@ We implemented 2 types of transactions:
 4. User confirms payment using biometry
 5. Transaction is accepted
 
+![payment screen](Screenshots/qrpay3.png)
+![confirmation screen](Screenshots/qrpay2.png)
+
 ### Money transfer between users:
 1. User1 opens our app
 2. On their home page there is a QR code
@@ -28,3 +31,6 @@ We implemented 2 types of transactions:
 5. User2 can input the amount of money they want to send to User1
 6. User2 confirms transaction with biometry
 7. Transaction is completed
+
+![money transfer screen](Screenshots/qrpay4.png)
+![user's qr code screen](Screenshots/qrpay1.png)
