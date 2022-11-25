@@ -36,10 +36,7 @@ def pay(id):
     if id not in sessions.keys():
         abort(404)
     (n, a, c) = sessions.get(id)
-    if random.random() > 0.5:
-        sessions[id] = (n, a, True)
-        return jsonify({'completed': True})
-    else:
-        return jsonify({'completed': False, 'message': 'Transaction denied: we randomly deny 50% of transactions... Please try again.'})
-
+    sessions[id] = (n, a, True)
+    return jsonify({'completed': True})
+    
 app.run()
