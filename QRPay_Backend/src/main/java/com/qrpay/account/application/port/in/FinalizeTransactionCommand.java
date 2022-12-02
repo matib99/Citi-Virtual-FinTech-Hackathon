@@ -1,7 +1,7 @@
 package com.qrpay.account.application.port.in;
 
-import com.qrpay.account.domain.Money;
 import com.qrpay.account.domain.Transaction.AccountId;
+import com.qrpay.account.domain.Transaction.TransactionId;
 import com.qrpay.common.SelfValidating;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -11,24 +11,19 @@ import javax.validation.constraints.NotNull;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public
-class SendMoneyCommand extends SelfValidating<SendMoneyCommand> {
+class FinalizeTransactionCommand extends SelfValidating<FinalizeTransactionCommand> {
 
     @NotNull
     private final AccountId sourceAccountId;
 
     @NotNull
-    private final AccountId targetAccountId;
+    private final TransactionId transactionId;
 
-    @NotNull
-    private final Money money;
-
-    public SendMoneyCommand(
+    public FinalizeTransactionCommand(
             AccountId sourceAccountId,
-            AccountId targetAccountId,
-            Money money) {
+            TransactionId transactionId) {
         this.sourceAccountId = sourceAccountId;
-        this.targetAccountId = targetAccountId;
-        this.money = money;
+        this.transactionId = transactionId;
         this.validateSelf();
     }
 }

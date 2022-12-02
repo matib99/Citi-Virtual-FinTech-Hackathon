@@ -21,6 +21,10 @@ public class Money {
 		return new Money(BigInteger.valueOf(value));
 	}
 	
+	public boolean isGreater(Money other) {
+		return this.amount.compareTo(other.amount) > 0;
+	}
+	
 	public BigInteger getAmount() {
 		return amount;
 	}

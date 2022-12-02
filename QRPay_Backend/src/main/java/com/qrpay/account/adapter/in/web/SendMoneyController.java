@@ -4,9 +4,12 @@ import com.qrpay.account.application.port.in.SendMoneyUseCase;
 import com.qrpay.account.application.port.in.SendMoneyCommand;
 import com.qrpay.common.WebAdapter;
 import com.qrpay.account.domain.Money;
+import com.qrpay.account.domain.Transaction.AccountId;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @WebAdapter
@@ -18,16 +21,21 @@ class SendMoneyController {
 
 	@PostMapping(path = "/user/{targetAccountId}")
 	void sendMoney(
-			@PathVariable("sourceAccountId") Long sourceAccountId,
-			@PathVariable("targetAccountId") Long targetAccountId,
-			@PathVariable("amount") Long amount) {
+			@PathVariable("targetAccountId") AccountId targetAccountId,
+			@RequestBody SendMoneyBody body) {
 
 		SendMoneyCommand command = new SendMoneyCommand(
-				new AccountId(sourceAccountId),
-				new AccountId(targetAccountId),
-				Money.of(amount));
+				body.token,
+				targetAccountId,
+				body.amount);
 
 		sendMoneyUseCase.sendMoney(command);
+	}
+	
+	@RequiredArgsConstructor
+	class SendMoneyBody {
+		private final AccountId token;
+		private final Money amount;
 	}
 
 }

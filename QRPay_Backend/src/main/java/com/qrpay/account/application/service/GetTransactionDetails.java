@@ -1,24 +1,20 @@
 package com.qrpay.account.application.service;
 
-import java.time.LocalDateTime;
-
 import com.qrpay.account.application.port.in.GetTransactionDetailsQuery;
-import com.qrpay.account.domain.Money;
+import com.qrpay.account.application.port.out.LoadTransactionPort;
+import com.qrpay.account.domain.Transaction;
+import com.qrpay.account.domain.Transaction.TransactionId;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class GetTransactionDetailsService implements GetTransactionDetailsQuery {
 
 	private final LoadTransactionPort loadTransactionPort;
-	
-	public GetTransactionDetailsService(LoadTransactionPort loadAccountPort) {
-		this.loadTransactionPort = loadAccountPort;
-	}
 
 	@Override
-	public Money getTransationDetails(TransactionId transactiontId) {
-		return PersistancePort.loadTransaction(transactionId)
-				.calculateBalance();
+	public Transaction getDetails(TransactionId transactionId) {
+		return loadTransactionPort.loadTransaction(transactionId);
 	}
 
 }
